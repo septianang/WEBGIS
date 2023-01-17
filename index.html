@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Identifikasi Rawan Kebakaran Hutan Kabupaten Bantul</title>
+    <link rel="stylesheet" href="library/leaflet/leaflet.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="library/leaflet/leaflet.js"></script>
+    <script src="library/leaflet-providers-master/leaflet-providers.js"></script>
+    <script src="library/jquery.min.js"></script>
+</head>
+
+<body>
+    <div id="map">
+        <script>
+            var map = L.map('map').setView([-7.895353, 110.345301], 13);
+
+            var baseLayers = {
+                'Esri WorldTopoMap': L.tileLayer.provider('Esri.WorldTopoMap'),
+                'Esri WorldImagery': L.tileLayer.provider('Esri.WorldImagery').addTo(map),
+                'OSM Default': L.tileLayer.provider('OpenStreetMap.DE'),
+                'OSM France': L.tileLayer.provider('OpenStreetMap.France')
+            };
+
+
+            var PAIRWISE = L.geoJson(null, {
+                style: function(feature) {
+                    return {
+                        color: "black",
+                        fillColor: PWS[feature.properties.kelas],
+                        weight: 0.3,
+                        opacity: 0,
+                        fillOpacity: 0.7
+                    };
+                },
+                onEachFeature: function( feature, layer ){
+                    layer.bindPopup(
+                        "Kelas : " + "<left>" + feature.properties.kelas + "</left>" + "<br>"
+                        )
+                }
+            });
+            $.getJSON("data/KBKRN PW.json", function(data) {
+                PAIRWISE.addData(data);
+            });
+
+
+			var PWS = {
+				"RENDAH":"#bdf5f1",
+				"SEDANG":"#ffff00",
+				"TINGGI":"#ff0000"
+			};
+
+
+            var DIRECT = L.geoJson(null, {
+                style: function(feature) {
+                    return {
+                        color: "black",
+                        fillColor: DCT[feature.properties.kelas],
+                        weight: 0.3,
+                        opacity: 0,
+                        fillOpacity: 0.7
+                    };
+                },
+                onEachFeature: function( feature, layer ){
+                    layer.bindPopup(
+                        "Kelas : " + "<left>" + feature.properties.kelas + "</left>" + "<br>"
+                        )
+                }
+            });
+            $.getJSON("data/KBKRN DR.json", function(data) {
+                DIRECT.addData(data);
+            });
+
+            var DCT = {
+                "RENDAH":"#bdf5f1",
+                "SEDANG":"#ffff00",
+                "TINGGI":"#ff0000"
+            };
+
+            var RANKORDER = L.geoJson(null, {
+                style: function(feature) {
+                    return {
+                        color: "black",
+                        fillColor: RODR[feature.properties.kelas],
+                        weight: 0.3,
+                        opacity: 0,
+                        fillOpacity: 0.7
+                    };
+                },
+                onEachFeature: function( feature, layer ){
+                    layer.bindPopup(
+                        "Kelas : " + "<left>" + feature.properties.kelas + "</left>" + "<br>"
+                        )
+                }
+            });
+            $.getJSON("data/KBKRN RO.json", function(data) {
+                RANKORDER.addData(data);
+            });
+
+
+            var RODR = {
+                "RENDAH":"#bdf5f1",
+                "SEDANG":"#ffff00",
+                "TINGGI":"#ff0000"
+            };
+
+            var mapLayers = {
+                'Metode Pairwise': PAIRWISE,
+                'Metode Direct': DIRECT,
+                'Metode Rank Order': RANKORDER
+            };
+
+            L.control.layers(baseLayers, mapLayers).addTo(map);
+        </script>
+    </div>
+</body>
+
+</html>
